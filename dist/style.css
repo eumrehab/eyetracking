@@ -21,3 +21,5 @@
 
 /* Focus on automatic tests and compact results. */
 .workspace{grid-template-columns:1fr!important}.camera{max-width:600px;margin:0 auto;aspect-ratio:4/3!important}.right-column{display:block!important;margin:0 0 22px}.right-column>.card{margin-top:15px}.test-grid{display:block}.simple-result{padding:24px}.simple-state{border-bottom:1px solid var(--line);padding:18px 0}.simple-state h3{font-size:22px;font-weight:600;margin:0 0 12px;color:#50427c}.simple-state p{font-size:17px;margin:0;font-variant-numeric:tabular-nums}.simple-state small{display:block;margin-top:10px;color:#757080}.simple-result details{padding:20px 0 0}.simple-result .subtle{font-size:12px}.camera-controls{justify-content:center;flex-wrap:wrap}.camera-controls button{margin-left:0}
+
+.test-readiness{margin:12px 22px!important;padding:12px 15px;border-radius:8px;background:#fff4e6;color:#865613!important}.test-readiness[data-phase="ready"]{background:#e9f8f0;color:#206347!important}.test-readiness[data-phase="busy"],.test-readiness[data-phase="loading"]{background:#f1edfc;color:#65538f!important}

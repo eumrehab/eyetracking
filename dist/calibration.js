@@ -12,9 +12,9 @@ export function calibrationStep(capture,raw,t,{duration=1.3,settle=.35,minFrames
 }
 export function calibrationSpace(fullscreen,width,height){return {coordinateSpace:fullscreen?'fullscreen viewport':'browser viewport',viewport:{width,height,fullscreen:!!fullscreen}};}
 
-export const AUTO_CALIBRATION={duration:1.8,settle:.65,minFrames:12,irisSD:.025,headSD:2.5};
+export const AUTO_CALIBRATION={duration:1.8,maxDuration:4,settle:.65,minFrames:12,irisSD:.025,headSD:2.5};
 export function automaticCalibrationStep(capture,raw,t){
- const r=calibrationStep(capture,raw,t,AUTO_CALIBRATION);if(r.status!=='complete')return r;
+ const r=calibrationStep(capture,raw,t,AUTO_CALIBRATION);if(r.status==='retry'&&t-capture.start<AUTO_CALIBRATION.maxDuration)return {status:'collecting'};if(r.status!=='complete')return r;
  const sd=values=>{const mean=values.reduce((a,b)=>a+b,0)/values.length;return Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/values.length);};
  if(['irisX','irisY'].some(k=>sd(r.samples.map(s=>s[k]))>AUTO_CALIBRATION.irisSD)||['yaw','pitch','roll'].some(k=>sd(r.samples.map(s=>s.pose[k]))>AUTO_CALIBRATION.headSD))return {status:'retry',reason:'눈과 머리 움직임이 큽니다. 머리를 고정하고 같은 점을 바라보세요.'};
  return r;

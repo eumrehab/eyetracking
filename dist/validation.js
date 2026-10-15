@@ -1,5 +1,5 @@
 import {angleDiff} from './engine.js';
-export const VERSION='0.8.0';
+export const VERSION='0.8.1';
 export const LABELS={CENTER:'중앙',LEFT:'왼쪽',RIGHT:'오른쪽',UP:'위',DOWN:'아래',UP_LEFT:'좌상',UP_RIGHT:'우상',DOWN_LEFT:'좌하',DOWN_RIGHT:'우하',INSIDE:'화면 안',OUTSIDE:'화면 밖',UNKNOWN:'측정 실패',UNCLEAR:'판단 불가'};
 export const DIRECTIONS=['CENTER','LEFT','RIGHT','UP','DOWN','UP_LEFT','UP_RIGHT','DOWN_LEFT','DOWN_RIGHT'];
 export const HEADS=['CENTER','LEFT','RIGHT','UP','DOWN','TILT_LEFT','TILT_RIGHT'];
