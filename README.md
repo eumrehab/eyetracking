@@ -57,3 +57,13 @@ Node.js 20 이상이 필요합니다. 별도 패키지 설치나 빌드 없이 �
     git add .
 
 제3자 코드의 dist/vendor/LICENSE와 NOTICE.txt를 보존하세요. 프로젝트 자체의 공개 라이선스는 아직 지정하지 않았습니다.
+
+## GitHub Pages에서 열기
+
+저장소 Settings → Pages에서 Source는 **Deploy from a branch**, Branch는 **main**, 폴더는 **/(root)**로 선택합니다.
+
+최상위 index.html은 ./dist/의 앱으로 연결합니다. .nojekyll은 모델·WASM을 포함한 정적 파일을 그대로 게시하게 합니다. 이 두 파일을 삭제하지 마세요. GitHub Pages에서는 Node 서버를 실행하지 않고 브라우저 앱을 직접 제공합니다.
+
+GitHub Desktop에서 변경사항을 Commit to main → Push origin으로 올립니다. GitHub 저장소의 Actions에서 pages build and deployment가 성공하면 Pages 주소로 접속합니다. 업데이트가 안 보이면 새로고침하세요.
+
+localhost의 대상자·측정 기록은 배포 사이트로 자동 복사되지 않습니다. 필요하면 로컬 사이트에서 전체 백업을 내려받아 배포 사이트에서 직접 복원하세요. 개인 백업을 Git에 추가하지 마세요.
