@@ -1,0 +1,19 @@
+import {targetCounts} from './gaze-test.js';
+import {researchSummary,researchCSV,comparisonRows,stateEpisodes,trialRecords} from './research-metrics.js';
+import {LABELS} from './validation.js';
+import {csv} from './engine.js';
+const $=id=>document.getElementById(id),fmt=(x,n=3)=>x===null||x===undefined?'—':Number(x).toFixed(n),label=x=>LABELS[x]??x??'';
+function row(id,values){const tr=document.createElement('tr');for(const value of values){const td=document.createElement('td');td.textContent=value;tr.append(td);}$(id).append(tr);}
+let selected=null;
+function renderEpisodes(){if(!selected)return;const all=stateEpisodes(selected),filtered=all.filter(e=>$('episodeFilter').value==='ALL'||e.state===$('episodeFilter').value);$('researchEpisodes').replaceChildren();for(const e of filtered.slice(-200))row('researchEpisodes',[e.id,label(e.state),fmt(e.start),fmt(e.end),fmt(e.duration)]);$('episodeCount').textContent=filtered.length+'구간 · 최근 200구간 표시 · CSV 전체 내보내기';}
+export function renderResearch(data){selected=data;const summary=researchSummary(data);$('researchPanel').hidden=!!data.referenceOnly;$('researchStatus').textContent=summary.status==='measured'?'MediaPipe 기반 시험용 관측 · 보정 후 '+fmt(summary.observedSeconds)+'초 · 시선 실패 '+fmt(summary.failurePct,1)+'% · 프로그램/A 계산 분리':'보정 후 유효 측정 시간이 없습니다. 자동 측정 기록을 확보하려면 새 측정에서 시선 보정을 완료하세요.';
+const tc=targetCounts(data);$('targetCounts').textContent='보정 수집 '+tc.collected+' / 9개 (정확도 아님) · 별도 화면 표적: 계획 '+tc.planned+'개 / 제시 '+tc.presented+'개 / 완료 '+tc.completed+'개 / 추정 적중 '+tc.estimatedHits+'개 · 적중 기준과 개별 시간은 아래 표적 원자료에서 확인';
+for(const id of ['researchItems','researchDirections','researchTimeline','researchTrials'])$(id).replaceChildren();
+for(const t of summary.tasks)row('researchItems',[t.itemId+' / '+t.itemLabel,fmt(t.start)+' → '+fmt(t.end),t.responseMissing?'미응답':fmt(t.responseSeconds)+'초',t.delayCount+' / '+fmt(t.delaySeconds)+'초',fmt(t.insideSeconds)+'초',t.outsideCount+' / '+fmt(t.outsideSeconds)+'초',fmt(t.failedSeconds)+'초',(t.status==='interrupted'?'중단':t.status==='active'?'진행 중':'종료')+(t.delayAutoClosed?' · 지연 자동 닫힘':'')]);
+if(!summary.tasks.length)row('researchItems',['모의 문항 기록 없음','—','—','—','—','—','—','문항 시작·응답·종료 버튼으로 수집']);
+for(const f of summary.fields){for(const c of f.categories)row('researchDirections',[label({direction:'시선 방향',screen:'화면 상태',head:'머리 방향'}[f.field]),label(c.state),c.n,fmt(c.seconds,1)+'초',fmt(c.validPct,1)+'%',f.valid+' / '+f.total]);row('researchDirections',[{direction:'시선 방향',screen:'화면 상태',head:'머리 방향'}[f.field],'측정 실패',f.failed,fmt(f.failed*.5,1)+'초','—',f.valid+' / '+f.total]);}
+for(const r of comparisonRows(data).slice(-100))row('researchTimeline',[fmt(r.start,1)+' → '+fmt(r.end,1),label(r.direction)+' / '+(label(r.aDirection)||'미입력'),label(r.screen)+' / '+(label(r.aScreen)||'미입력'),label(r.head)+' / '+(label(r.aHead)||'미입력'),r.itemIds||'문항 외',fmt(r.directionFailure*100,1)+'%']);
+for(const t of trialRecords(data))row('researchTrials',[t.id+' / '+({target:'화면 표적',outside:'화면 밖 표적',head:'머리 방향',screenInside:'화면 안 10회',screenOutside:'화면 밖 10회'})[t.kind],label(t.expected),fmt(t.start)+' → '+fmt(t.end),fmt(t.duration),fmt(t.validSeconds)+' / '+fmt(t.nearSeconds),fmt(t.longestNearSeconds),t.interrupted?'중단 · 판정 보류':t.end===null?'진행 중':t.estimatedHit===null?'해당 없음':t.estimatedHit?'추정 적중':'기준 미충족']);
+if(!(data.trials??[]).length)row('researchTrials',['표적 지시 기록 없음','—','—','—','—','—','표적 검증 버튼으로 수집']);
+renderEpisodes();return summary;}
+export function mountResearchExports({download,getData}){$('episodeFilter').onchange=renderEpisodes;for(const [id,type] of [['downloadGazePoints','points'],['downloadResearchSummary','summary'],['downloadEpisodes','episodes'],['downloadItems','tasks'],['downloadEvents','events'],['downloadPaired','paired'],['downloadTrials','trials']])$(id).onclick=()=>{const data=getData();if(data)download(csv(researchCSV(data,type)),data.meta.session+'_research_'+type+'.csv','text/csv;charset=utf-8');};}

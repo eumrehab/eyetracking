@@ -1,0 +1,14 @@
+{
+  "name": "gaze-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test validation-tests.mjs descriptive-tests.mjs participant-tests.mjs calibration-tests.mjs research-tests.mjs gaze-test-tests.mjs workflow-tests.mjs automatic-tests.mjs storage-tests.mjs"
+  },
+  "version": "0.8.0",
+  "description": "Local gaze tracking validation web app",
+  "engines": {
+    "node": ">=20"
+  }
+}
